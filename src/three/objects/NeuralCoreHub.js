@@ -1,78 +1,140 @@
-import React, { useMemo, useRef } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
+import { useGLTF, Html } from "@react-three/drei";
 import { OBJECT_POSITIONS } from "@/config/checkpoints";
 import { useFocus, hoverProps } from "@/three/objects/_useFocus";
 import { useTransition } from "@/three/objects/_useTransition";
 import { useClickPulse } from "@/three/objects/_useClickPulse";
 import { useSceneStore } from "@/store/useSceneStore";
-import { C } from "@/config/theme";
-import { lacquer, metal } from "@/three/materials";
+import { NEURAL_HOTSPOTS } from "@/config/neuralHotspots";
 
-function fibonacciSphere(count, radius) {
-  const pts = [];
-  const golden = Math.PI * (3 - Math.sqrt(5));
-  for (let i = 0; i < count; i++) {
-    const y = 1 - (i / (count - 1)) * 2;
-    const r = Math.sqrt(1 - y * y);
-    const theta = golden * i;
-    pts.push(new THREE.Vector3(Math.cos(theta) * r * radius, y * radius, Math.sin(theta) * r * radius));
-  }
-  return pts;
-}
+const MODEL_URL = `${process.env.PUBLIC_URL}/models/neural_networks_of_the_brain.glb`;
+useGLTF.preload(MODEL_URL);
 
-// Object 1 - Neural Core Hub (Hero). Solid teal core, lit nodes, connector lines.
+const TARGET_SIZE = 3.3; // max dimension after normalisation
+
+// Light-green glass shell over "light black" inner networks.
+const SHELL_GREEN = "#A9E2C4";
+const INNER_BLACK = "#2E323A";
+const INNER_GLOW = "#7B828F";
+
+// Object 1 - Neural Core Hub (Hero). Real brain GLB: a translucent glass shell
+// over glowing inner "neural network" lobes. Three numbered hotspots annotate
+// our core business systems.
 export default function NeuralCoreHub({ index = 0, quality = "high" }) {
   const group = useRef();
-  const nodesRef = useRef();
-  const ringParticlesRef = useRef();
-  const coreRef = useRef();
+  const netMatsRef = useRef([]);
   const focus = useFocus(index);
   const tr = useTransition(index);
   const [pulse, burst] = useClickPulse();
 
-  const NODE_COUNT = quality === "low" ? 44 : 80;
-  const RING_PARTICLES = quality === "low" ? 18 : 40;
+  const activeIndex = useSceneStore((s) => s.activeIndex);
+  const isMobile = useSceneStore((s) => s.isMobile);
+  const showHotspots = activeIndex === index && !isMobile;
+  const [openNum, setOpenNum] = useState(null);
+  const [hoverNum, setHoverNum] = useState(null);
 
-  const nodePositions = useMemo(() => fibonacciSphere(NODE_COUNT, 1.4), [NODE_COUNT]);
+  const { scene } = useGLTF(MODEL_URL);
 
-  const edgeGeometry = useMemo(() => {
-    const positions = [];
-    const threshold = 0.85;
-    for (let i = 0; i < nodePositions.length; i++) {
-      for (let j = i + 1; j < nodePositions.length; j++) {
-        if (nodePositions[i].distanceTo(nodePositions[j]) < threshold) {
-          positions.push(nodePositions[i].x, nodePositions[i].y, nodePositions[i].z);
-          positions.push(nodePositions[j].x, nodePositions[j].y, nodePositions[j].z);
-        }
+  // Clone the cached scene, recentre + scale it to the rig's footprint, and swap
+  // in region-coloured materials so the three hotspots map onto three visibly
+  // different parts of the brain: FRONT shell (teal), INNER networks (amber),
+  // BACK shell (blue). Cloned materials only — the shared gltf cache is never
+  // mutated, so re-mounts stay clean. Returns the model + per-region anchors so
+  // each numbered dot sits directly on its coloured region.
+  const { model, anchors } = useMemo(() => {
+    const root = scene.clone(true);
+    const nets = [];
+    const front = [];
+    const back = [];
+    const inner = [];
+
+    const glass = (col) =>
+      new THREE.MeshPhysicalMaterial({
+        color: new THREE.Color(col),
+        metalness: 0,
+        roughness: 0.12,
+        transmission: quality === "high" ? 0.5 : 0,
+        thickness: 0.6,
+        ior: 1.3,
+        clearcoat: 0.6,
+        clearcoatRoughness: 0.25,
+        transparent: true,
+        opacity: quality === "high" ? 0.34 : 0.3,
+        depthWrite: false,
+        envMapIntensity: 0.8,
+        side: THREE.DoubleSide,
+      });
+
+    root.traverse((o) => {
+      if (!o.isMesh) return;
+      o.castShadow = quality === "high";
+      o.receiveShadow = false;
+      const src = o.material;
+      const name = o.name || "";
+      if (src && src.transparent) {
+        // translucent brain shell -> uniform light grey glass; still track the
+        // front / back regions so the hotspot dots anchor onto them.
+        o.material = glass(SHELL_GREEN);
+        if (/Front/i.test(name)) front.push(o);
+        else if (/Back/i.test(name)) back.push(o);
+      } else if (src) {
+        // inner networks -> "light black" charcoal with a soft grey glow
+        const net = src.clone();
+        net.map = null;
+        net.emissiveMap = null;
+        net.color = new THREE.Color(INNER_BLACK);
+        net.emissive = new THREE.Color(INNER_GLOW);
+        net.emissiveIntensity = 0.45;
+        net.roughness = 0.55;
+        net.metalness = 0.1;
+        net.envMapIntensity = 1.0;
+        o.material = net;
+        nets.push(net);
+        inner.push(o);
       }
-    }
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
-    return geo;
-  }, [nodePositions]);
+    });
 
-  const nodePhases = useMemo(() => nodePositions.map(() => Math.random() * Math.PI * 2), [nodePositions]);
-  const rings = useMemo(
-    () => [
-      { tilt: THREE.MathUtils.degToRad(25), axis: "x" },
-      { tilt: THREE.MathUtils.degToRad(65), axis: "z" },
-      { tilt: THREE.MathUtils.degToRad(90), axis: "x" },
-    ],
-    []
-  );
-  const ringParticleData = useMemo(() => {
-    const arr = [];
-    for (let i = 0; i < RING_PARTICLES; i++) {
-      arr.push({ ring: i % rings.length, angle: Math.random() * Math.PI * 2, speed: 0.4 + Math.random() * 0.6, radius: 2.0 });
-    }
-    return arr;
-  }, [RING_PARTICLES, rings.length]);
+    // recentre to origin + scale so max dimension ≈ TARGET_SIZE
+    const box = new THREE.Box3().setFromObject(root);
+    const size = new THREE.Vector3();
+    const center = new THREE.Vector3();
+    box.getSize(size);
+    box.getCenter(center);
+    const maxDim = Math.max(size.x, size.y, size.z) || 1;
+    const s = TARGET_SIZE / maxDim;
+    root.scale.setScalar(s);
+    root.position.set(-center.x * s, -center.y * s, -center.z * s);
+    root.updateMatrixWorld(true);
 
-  const dummy = useMemo(() => new THREE.Object3D(), []);
-  const tmpColor = useMemo(() => new THREE.Color(), []);
-  const spin = useRef(0); // accumulated yaw so pointer-lean can own x/z
-  const tilt = useRef({ x: 0, z: 0 });
+    // Anchor each hotspot on the centroid of its region, pushed outward so the
+    // dot floats just off the surface of that coloured area.
+    const anchorFor = (meshes, fallback, push = 0.45) => {
+      if (!meshes.length) return fallback;
+      const b = new THREE.Box3();
+      meshes.forEach((m) => b.expandByObject(m));
+      const c = new THREE.Vector3();
+      b.getCenter(c);
+      const dir = c.clone();
+      if (dir.lengthSq() < 1e-3) dir.set(0, 1, 0);
+      dir.normalize();
+      c.addScaledVector(dir, push);
+      return [c.x, c.y, c.z];
+    };
+
+    netMatsRef.current = nets;
+    return {
+      model: root,
+      anchors: {
+        1: anchorFor(front, [-1.35, 0.45, 0.9]),
+        2: anchorFor(inner, [0, 0.3, 0], 0.9),
+        3: anchorFor(back, [0, 1.35, -0.4]),
+      },
+    };
+  }, [scene, quality]);
+
+  const spin = useRef(0); // accumulated yaw for the straight spin
 
   useFrame((state, delta) => {
     const t = state.clock.elapsedTime;
@@ -82,19 +144,10 @@ export default function NeuralCoreHub({ index = 0, quality = "high" }) {
     const store = useSceneStore.getState();
     const pv = pulse.current.v * (store.reducedMotion ? 0.35 : 1); // detonation 0..1
 
+    // straight auto-rotate around the vertical axis only — no pointer lean/tilt
     const rotSpeed = THREE.MathUtils.lerp(0.0032, 0.0008, f);
     spin.current += rotSpeed * 60 * delta;
-
-    // Cursor magnetism: the core leans toward the pointer, scaled by focus so it
-    // only reacts while it's the hero in view. Eased for smoothness.
-    const lean = store.reducedMotion ? 0 : f;
-    const ptr = store.pointer;
-    const tgtX = ptr.y * 0.28 * lean;
-    const tgtZ = -ptr.x * 0.2 * lean;
-    const k = Math.min(1, delta * 4);
-    tilt.current.x += (tgtX - tilt.current.x) * k;
-    tilt.current.z += (tgtZ - tilt.current.z) * k;
-    g.rotation.set(tilt.current.x + rotSpeed * 0.33 * t, spin.current, tilt.current.z);
+    g.rotation.set(0, spin.current, 0);
 
     // Hidden during the hero (beat 0): the hub only reveals + grows in as the
     // camera flies through the network toward it (beat 1). Folded into the
@@ -104,49 +157,10 @@ export default function NeuralCoreHub({ index = 0, quality = "high" }) {
     g.scale.setScalar(THREE.MathUtils.lerp(1.4, 1, tr.current) * reveal);
     if (!g.visible) return;
 
-    if (nodesRef.current) {
-      for (let i = 0; i < nodePositions.length; i++) {
-        const np = 0.4 + 0.6 * (0.5 + 0.5 * Math.sin(t * 1.5 + nodePhases[i]));
-        dummy.position.copy(nodePositions[i]);
-        if (pv > 0.0001) dummy.position.addScaledVector(nodePositions[i], pv * 0.7); // radial blast
-        dummy.scale.setScalar(0.04 * (0.8 + np * 0.6) * (1 + pv * 0.8));
-        dummy.updateMatrix();
-        nodesRef.current.setMatrixAt(i, dummy.matrix);
-        const amber = Math.sin(t * 0.7 + nodePhases[i] * 2.0) > 0.92;
-        if (amber) tmpColor.set(C.amberDeep);
-        else tmpColor.set(C.teal).multiplyScalar(0.6 + np * 0.4 + pv * 0.6);
-        nodesRef.current.setColorAt(i, tmpColor);
-      }
-      nodesRef.current.instanceMatrix.needsUpdate = true;
-      if (nodesRef.current.instanceColor) nodesRef.current.instanceColor.needsUpdate = true;
-    }
-
-    if (ringParticlesRef.current) {
-      for (let i = 0; i < ringParticleData.length; i++) {
-        const d = ringParticleData[i];
-        d.angle += d.speed * delta * (1 + pv * 5);
-        const ring = rings[d.ring];
-        const v = new THREE.Vector3(Math.cos(d.angle) * d.radius, Math.sin(d.angle) * d.radius, 0);
-        if (ring.axis === "x") v.applyAxisAngle(new THREE.Vector3(1, 0, 0), ring.tilt);
-        else v.applyAxisAngle(new THREE.Vector3(0, 0, 1), ring.tilt);
-        dummy.position.copy(v);
-        dummy.scale.setScalar(0.05);
-        dummy.updateMatrix();
-        ringParticlesRef.current.setMatrixAt(i, dummy.matrix);
-      }
-      ringParticlesRef.current.instanceMatrix.needsUpdate = true;
-    }
-
-    if (coreRef.current) {
-      coreRef.current.material.emissiveIntensity = f * 0.5 + pv * 2.0;
-    }
+    // networks breathe + flare on focus / click
+    const glow = 0.4 + f * 0.8 + pv * 2.0 + 0.12 * Math.sin(t * 1.6);
+    for (const m of netMatsRef.current) m.emissiveIntensity = glow;
   });
-
-  const coreMat = useMemo(
-    () => lacquer(C.teal, { quality, roughness: 0.32, clearcoat: 0.7, clearcoatRoughness: 0.22, emissive: C.tealBright, envMapIntensity: 1.15 }),
-    [quality]
-  );
-  const ringMat = useMemo(() => metal(C.teal, { quality, roughness: 0.28, envMapIntensity: 1.4 }), [quality]);
 
   return (
     <group
@@ -158,31 +172,54 @@ export default function NeuralCoreHub({ index = 0, quality = "high" }) {
         burst();
       }}
     >
-      <mesh ref={coreRef} castShadow>
-        <icosahedronGeometry args={[1.0, 3]} />
-        <meshPhysicalMaterial {...coreMat} />
-      </mesh>
-      <mesh>
-        <icosahedronGeometry args={[1.42, 2]} />
-        <meshBasicMaterial color={C.teal} wireframe transparent opacity={0.12} />
-      </mesh>
-      <instancedMesh ref={nodesRef} args={[null, null, nodePositions.length]}>
-        <sphereGeometry args={[1, 12, 12]} />
-        <meshStandardMaterial color="#ffffff" roughness={0.3} metalness={0.15} envMapIntensity={1.2} />
-      </instancedMesh>
-      <lineSegments geometry={edgeGeometry}>
-        <lineBasicMaterial color={C.line} transparent opacity={0.45} />
-      </lineSegments>
-      {rings.map((ring, i) => (
-        <mesh key={i} rotation={ring.axis === "x" ? [ring.tilt, 0, 0] : [0, 0, ring.tilt]}>
-          <torusGeometry args={[2.0, 0.016, 12, 160]} />
-          <meshPhysicalMaterial {...ringMat} />
-        </mesh>
-      ))}
-      <instancedMesh ref={ringParticlesRef} args={[null, null, ringParticleData.length]}>
-        <sphereGeometry args={[1, 8, 8]} />
-        <meshStandardMaterial color={C.amber} emissive={C.amber} emissiveIntensity={0.6} roughness={0.35} metalness={0.2} envMapIntensity={1.1} />
-      </instancedMesh>
+      <primitive object={model} />
+
+      {showHotspots &&
+        NEURAL_HOTSPOTS.map((h) => {
+          const open = openNum === h.num || hoverNum === h.num;
+          return (
+            <Html key={h.num} position={anchors[h.num] || h.anchor} center zIndexRange={[120, 0]} style={{ pointerEvents: "none" }}>
+              <div
+                className="relative flex items-center justify-center"
+                style={{ pointerEvents: "auto" }}
+                onPointerEnter={() => setHoverNum(h.num)}
+                onPointerLeave={() => setHoverNum(null)}
+              >
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOpenNum((n) => (n === h.num ? null : h.num));
+                  }}
+                  className="w-6 h-6 rounded-full font-mono text-[11px] font-semibold text-white grid place-items-center shadow-[0_4px_12px_-4px_rgba(16,32,58,0.5)] ring-2 ring-white/80 transition-transform hover:scale-110"
+                  style={{ background: h.color }}
+                  aria-label={h.title}
+                >
+                  {h.num}
+                </button>
+                {open && (
+                  <div
+                    className="absolute left-1/2 bottom-[160%] -translate-x-1/2 w-[220px] pl-3 pr-3 py-2 rounded-[12px] bg-[rgba(255,255,255,0.97)] border border-[rgba(16,32,58,0.1)] border-l-[3px] backdrop-blur-[12px] shadow-[0_12px_32px_-12px_rgba(16,32,58,0.4)]"
+                    style={{ borderLeftColor: h.color }}
+                  >
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <span
+                        className="shrink-0 w-4 h-4 rounded-full grid place-items-center font-mono text-[9px] font-bold text-white"
+                        style={{ background: h.color }}
+                      >
+                        {h.num}
+                      </span>
+                      <span className="font-mono text-[10px] tracking-[0.08em] uppercase font-semibold" style={{ color: h.color }}>
+                        {h.title}
+                      </span>
+                    </div>
+                    <p className="text-[11px] leading-snug text-[#3F4F6B]">{h.body}</p>
+                  </div>
+                )}
+              </div>
+            </Html>
+          );
+        })}
     </group>
   );
 }

@@ -43,7 +43,7 @@ export default function DesktopNav() {
                     key={child.href}
                     to={child.href}
                     data-testid={`nav-link-${child.href.split("/").pop()}`}
-                    className="block px-4 py-2.5 text-[13px] text-[#5B6A85] hover:text-[#10203A] hover:bg-[rgba(26,156,136,0.06)] transition-colors"
+                    className="block px-4 py-2.5 text-[13px] text-[#5B6A85] hover:text-[#10203A] hover:bg-[rgba(0,212,255,0.06)] transition-colors"
                   >
                     {child.label}
                   </Link>

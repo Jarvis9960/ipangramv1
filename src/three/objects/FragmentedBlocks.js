@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { OBJECT_POSITIONS } from "@/config/checkpoints";
 import { useFocus, hoverProps } from "@/three/objects/_useFocus";
+import { useFocusFade } from "@/three/objects/_useFocusFade";
 import { useClickPulse } from "@/three/objects/_useClickPulse";
 import { C } from "@/config/theme";
 import { getDetailMaps } from "@/three/materials";
@@ -11,7 +12,9 @@ import { getDetailMaps } from "@/three/materials";
 // scattered, multi-coloured blocks assemble into a unified teal grid.
 export default function FragmentedBlocks({ index = 2, quality = "high" }) {
   const focus = useFocus(index);
+  const group = useRef();
   const refs = useRef([]);
+  useFocusFade(group, focus);
   const dimColors = useMemo(() => [C.amberDeep, C.purple, C.blue, C.green], []);
   const teal = useMemo(() => new THREE.Color(C.teal), []);
   // Click-to-explode: pulse drives 0->1->0; useFrame reads .v to push blocks out.
@@ -79,7 +82,7 @@ export default function FragmentedBlocks({ index = 2, quality = "high" }) {
   });
 
   return (
-    <group position={OBJECT_POSITIONS.blocks} {...hoverProps("blocks")}>
+    <group ref={group} position={OBJECT_POSITIONS.blocks} {...hoverProps("blocks")}>
       {blocks.map((b, i) => (
         <mesh
           key={i}

@@ -14,7 +14,7 @@ export default function FocusLight() {
     const cp = CHECKPOINTS[idx];
     const pos = OBJECT_POSITIONS[cp.object] || [0, 0, 0];
     easing.damp3(ref.current.position, [pos[0], pos[1] + 1.5, pos[2] + 4], 0.5, delta);
-    if (ref.current.color) ref.current.color.set(cp.accent || "#00D4AA");
+    if (ref.current.color) ref.current.color.set(cp.accent || "#00D4FF");
   });
-  return <pointLight ref={ref} intensity={2.2} distance={45} decay={1.4} color="#00D4AA" />;
+  return <pointLight ref={ref} intensity={2.2} distance={45} decay={1.4} color="#00D4FF" />;
 }

@@ -7,9 +7,9 @@ export const C = {
   fog: "#DCE2EC", // atmospheric depth fog
   ink: "#10203A", // text / deepest navy
   steel: "#3F4F6B", // neutral object base
-  teal: "#1A9C88", // primary accent
-  tealBright: "#27B6A1",
-  tealDeep: "#137A6B", // shadow/lowlight variant for richer PBR shading
+  teal: "#00D4FF", // primary accent (brand cyan)
+  tealBright: "#6EE7F9",
+  tealDeep: "#0891B2", // shadow/lowlight variant for richer PBR shading
   amber: "#D98A2B", // secondary accent
   amberDeep: "#B5701B",
   purple: "#7C5BD0",
@@ -24,4 +24,4 @@ export const C = {
 };
 
 // Pillar / category colors — refined to sit calmly together on a light ground.
-export const CATEGORY = ["#149A6E", "#1A9C88", "#CE8226", "#7C5BD0", "#3868D6"];
+export const CATEGORY = ["#149A6E", "#00D4FF", "#CE8226", "#7C5BD0", "#3868D6"];

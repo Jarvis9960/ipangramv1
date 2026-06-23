@@ -6,28 +6,28 @@ import HeroNetwork from "@/three/objects/HeroNetwork";
 import NeuralCoreHub from "@/three/objects/NeuralCoreHub";
 import CircuitBoard from "@/three/objects/CircuitBoard";
 import FragmentedBlocks from "@/three/objects/FragmentedBlocks";
-import FivePillars from "@/three/objects/FivePillars";
+import CubeSystems from "@/three/objects/CubeSystems";
 import GearCluster from "@/three/objects/GearCluster";
 import DigitalAvatar from "@/three/objects/DigitalAvatar";
 import WaveformOrb from "@/three/objects/WaveformOrb";
 import BrainNetwork from "@/three/objects/BrainNetwork";
 import IndustryCity from "@/three/objects/IndustryCity";
 import OrbitalDashboard from "@/three/objects/OrbitalDashboard";
-import TripleHelix from "@/three/objects/TripleHelix";
+import ChessStrategy from "@/three/objects/ChessStrategy";
 
 const COMPONENTS = [
   HeroNetwork,
   NeuralCoreHub,
   CircuitBoard,
   FragmentedBlocks,
-  FivePillars,
+  CubeSystems,
   GearCluster,
   DigitalAvatar,
   WaveformOrb,
   BrainNetwork,
   IndustryCity,
   OrbitalDashboard,
-  TripleHelix,
+  ChessStrategy,
 ];
 
 // Renders only the objects within a window around the active checkpoint

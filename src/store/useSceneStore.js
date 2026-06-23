@@ -10,6 +10,13 @@ const initial =
 export const useSceneStore = create((set) => ({
   scrollProgress: 0,
   scrollVelocity: 0, // smoothed, normalized scroll speed (0..~1) for reactivity
+  // Cinematic video frame-sequence intro that plays before the 3D journey.
+  // introProgress is 0..1 across the intro scroll band; introDone flips true once
+  // the user scrolls past it (and immediately for reduced-motion, which skips it).
+  introProgress: 0,
+  // The intro only skips in headless / no-WebGL (static fallback) contexts — it
+  // is scroll-driven, so it's shown even under prefers-reduced-motion.
+  introDone: !initial.webglEnabled,
   activeIndex: 0,
   qualityTier: initial.tier, // "high" | "mid" | "low"
   hovered: null, // hovered 3D object id or null
@@ -28,6 +35,8 @@ export const useSceneStore = create((set) => ({
 
   setScrollProgress: (p) => set({ scrollProgress: p }),
   setScrollVelocity: (v) => set({ scrollVelocity: v }),
+  setIntroProgress: (p) => set({ introProgress: p }),
+  setIntroDone: (v) => set({ introDone: v }),
   setActiveIndex: (i) => set({ activeIndex: i }),
   setQualityTier: (t) => set({ qualityTier: t }),
   setHovered: (h) => set({ hovered: h }),

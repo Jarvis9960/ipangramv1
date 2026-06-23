@@ -25,8 +25,8 @@ export default function WhySection({ eyebrow, title, body, points = [] }) {
         <div className="space-y-4 max-w-[700px]">
           {points.map((pt, i) => (
             <motion.div key={i} variants={itemReveal} className="flex items-start gap-4">
-              <span className="mt-1 w-6 h-6 rounded-full bg-[rgba(26,156,136,0.12)] flex items-center justify-center shrink-0">
-                <span className="w-2 h-2 rounded-full bg-[#1A9C88]" />
+              <span className="mt-1 w-6 h-6 rounded-full bg-[rgba(0,212,255,0.12)] flex items-center justify-center shrink-0">
+                <span className="w-2 h-2 rounded-full bg-[#00D4FF]" />
               </span>
               <div>
                 <h3 className="sub-page-h3 mb-1">{pt.title}</h3>

@@ -13,8 +13,14 @@ const NAV = [
 export default function Header() {
   const requestJump = useSceneStore((s) => s.requestJump);
   const scrollProgress = useSceneStore((s) => s.scrollProgress);
+  const introProgress = useSceneStore((s) => s.introProgress);
   const [open, setOpen] = useState(false);
   const scrolled = scrollProgress > 0.01;
+
+  // Keep the header out of the way during the cinematic intro; fade it in as the
+  // intro completes (introProgress is pinned at 1 in headless / no-WebGL contexts,
+  // so it shows immediately there).
+  const headerReveal = Math.min(1, Math.max(0, (introProgress - 0.88) / 0.12));
 
   useEffect(() => {
     if (open) document.body.style.overflow = "hidden";
@@ -33,6 +39,10 @@ export default function Header() {
       className={`fixed top-0 left-0 right-0 z-[60] transition-colors duration-300 ${
         scrolled ? "bg-[rgba(255,255,255,0.8)] backdrop-blur-[12px] border-b border-[rgba(16,32,58,0.1)]" : "bg-transparent"
       }`}
+      style={{
+        opacity: headerReveal,
+        pointerEvents: headerReveal <= 0 ? "none" : undefined,
+      }}
     >
       <div className="mx-auto max-w-[1280px] px-4 sm:px-6 h-[68px] flex items-center justify-between">
         <button
@@ -40,7 +50,7 @@ export default function Header() {
           onClick={() => go(0)}
           className="text-[16px] font-bold tracking-[-0.03em] text-[#10203A] cursor-hover"
         >
-          IPangram<span className="text-[#1A9C88]">.ai</span>
+          IPangram<span className="text-[#00D4FF]">.ai</span>
         </button>
 
         <nav data-testid="site-header-nav" className="hidden md:flex items-center gap-7">
@@ -67,7 +77,7 @@ export default function Header() {
           <button
             data-testid="site-header-book-session-button"
             onClick={() => go(11)}
-            className="bg-[#1A9C88] text-white text-[13px] font-semibold rounded-[10px] px-4 py-2 hover:bg-[#137A6B] hover:shadow-[0_10px_30px_-8px_rgba(26,156,136,0.5)] transition-[background,box-shadow] cursor-hover"
+            className="bg-[#00D4FF] text-white text-[13px] font-semibold rounded-[10px] px-4 py-2 hover:bg-[#0891B2] hover:shadow-[0_10px_30px_-8px_rgba(0,212,255,0.5)] transition-[background,box-shadow] cursor-hover"
           >
             Book Strategy Session
           </button>
@@ -101,7 +111,7 @@ export default function Header() {
           <button
             data-testid="mobile-book-session-button"
             onClick={() => go(11)}
-            className="mt-3 bg-[#1A9C88] text-white text-[14px] font-semibold rounded-[10px] px-4 py-3"
+            className="mt-3 bg-[#00D4FF] text-white text-[14px] font-semibold rounded-[10px] px-4 py-3"
           >
             Book Strategy Session
           </button>

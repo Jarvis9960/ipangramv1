@@ -31,7 +31,7 @@ export default function ApproachSection({ eyebrow, title, body, items = [] }) {
                 <ul className="mt-3 space-y-1.5">
                   {item.points.map((pt, j) => (
                     <li key={j} className="flex items-start gap-2 text-[13.5px] text-[#5B6A85]">
-                      <span className="mt-1.5 w-1 h-1 rounded-full bg-[#1A9C88] shrink-0" />
+                      <span className="mt-1.5 w-1 h-1 rounded-full bg-[#00D4FF] shrink-0" />
                       {pt}
                     </li>
                   ))}

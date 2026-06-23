@@ -99,7 +99,7 @@ export default function MobileNav({ open, onOpenChange }) {
           <Link
             to="/contact"
             onClick={() => onOpenChange(false)}
-            className="bg-[#1A9C88] text-white text-[14px] font-semibold rounded-[10px] px-4 py-3 text-center hover:bg-[#137A6B] transition-colors"
+            className="bg-[#00D4FF] text-white text-[14px] font-semibold rounded-[10px] px-4 py-3 text-center hover:bg-[#0891B2] transition-colors"
           >
             Book Strategy Session
           </Link>

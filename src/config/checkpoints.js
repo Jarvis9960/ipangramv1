@@ -21,18 +21,18 @@ export const OBJECT_POSITIONS = {
 const RAW = [
   // Beat 0 — HERO: camera sits in front of the network web; flies through it
   // (web fades) to land on the Neural Core Hub at beat 1. Overlay owns this beat.
-  { cameraPos: [0, 0, 11], lookAt: [0, 0, 4], object: "heroNet", panel: "hero", accent: "#1A9C88" },
-  { cameraPos: [0, 0, 4], lookAt: [0, 0, 0], object: "neuralHub", panel: "neuralCore", accent: "#00D4AA" },
+  { cameraPos: [0, 0, 11], lookAt: [0, 0, 4], object: "heroNet", panel: "hero", accent: "#00D4FF" },
+  { cameraPos: [0, 0, 4], lookAt: [0, 0, 0], object: "neuralHub", panel: "neuralCore", accent: "#00D4FF" },
   { cameraPos: [-1.5, 0.4, -5.5], lookAt: [-4, -1, -10], object: "circuit", panel: "scaleChanged", accent: "#F59E0B" },
   { cameraPos: [3, 1.4, -15], lookAt: [5, 2, -20], object: "blocks", panel: "systemsProblem", accent: "#F59E0B" },
-  { cameraPos: [0, 1.6, -25], lookAt: [0, 0, -32], object: "pillars", panel: "fiveSystems", accent: "#00D4AA" },
+  { cameraPos: [0, 1.6, -25], lookAt: [0, 0, -32], object: "pillars", panel: "fiveSystems", accent: "#00D4FF" },
   { cameraPos: [-3.6, -1, -37], lookAt: [-6, -2, -44], object: "gears", panel: "challenges", accent: "#F59E0B" },
   { cameraPos: [2.2, 1, -49.5], lookAt: [4, 1, -56], object: "avatar", panel: "framework", accent: "#7C3AED" },
-  { cameraPos: [-1, 1.8, -61.5], lookAt: [-3, 2, -68], object: "waveformOrb", panel: "digitalWorkers", accent: "#00D4AA" },
-  { cameraPos: [1, -0.6, -73.5], lookAt: [2, -1, -80], object: "brainNet", panel: "intellSystems", accent: "#00D4AA" },
+  { cameraPos: [-1, 1.8, -61.5], lookAt: [-3, 2, -68], object: "waveformOrb", panel: "digitalWorkers", accent: "#00D4FF" },
+  { cameraPos: [1, -0.6, -73.5], lookAt: [2, -1, -80], object: "brainNet", panel: "intellSystems", accent: "#00D4FF" },
   { cameraPos: [0, 3, -85], lookAt: [0, 0, -92], object: "cityBlock", panel: "industries", accent: "#2563EB" },
   { cameraPos: [-1, 1.4, -97.5], lookAt: [-2, 1, -104], object: "dashboards", panel: "whyHow", accent: "#2563EB" },
-  { cameraPos: [0, 1.4, -111], lookAt: [0, 1.5, -118], object: "helix", panel: "finalCTA", accent: "#00D4AA" },
+  { cameraPos: [0, 1.4, -111], lookAt: [0, 1.5, -118], object: "helix", panel: "finalCTA", accent: "#00D4FF" },
 ];
 
 export const CHECKPOINTS = RAW.map((c, i) => ({

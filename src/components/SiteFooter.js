@@ -13,7 +13,7 @@ function FooterColumn({ title, links }) {
           <li key={link.href}>
             <Link
               to={link.href}
-              className="text-[13.5px] text-[#5B6A85] hover:text-[#1A9C88] transition-colors"
+              className="text-[13.5px] text-[#5B6A85] hover:text-[#00D4FF] transition-colors"
             >
               {link.label}
             </Link>
@@ -39,7 +39,7 @@ export default function SiteFooter() {
                 to="/"
                 className="text-[16px] font-bold tracking-[-0.03em] text-[#10203A]"
               >
-                IPangram<span className="text-[#1A9C88]">.ai</span>
+                IPangram<span className="text-[#00D4FF]">.ai</span>
               </Link>
               <p className="text-[12px] text-[#8492A8] mt-2">
                 Intelligent Business Systems

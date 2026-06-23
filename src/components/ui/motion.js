@@ -1,18 +1,38 @@
 // Shared framer-motion variants for the data panels.
+// The panel slides in and orchestrates a staggered, spring-physics pop of its
+// children every time a new beat becomes active (DataPanelHost remounts the
+// shell per beat via AnimatePresence, so this re-fires on each scroll arrival).
 export const panelVariants = {
-  hidden: { opacity: 0, x: 22, filter: "blur(6px)" },
+  hidden: { opacity: 0, x: 34, filter: "blur(8px)" },
   show: {
     opacity: 1,
     x: 0,
     filter: "blur(0px)",
-    transition: { duration: 0.72, ease: [0.22, 1, 0.36, 1], staggerChildren: 0.07, delayChildren: 0.08 },
+    transition: {
+      duration: 0.5,
+      ease: [0.22, 1, 0.36, 1],
+      staggerChildren: 0.085,
+      delayChildren: 0.14,
+    },
   },
-  exit: { opacity: 0, x: 18, filter: "blur(4px)", transition: { duration: 0.42, ease: [0.4, 0, 0.2, 1] } },
+  exit: { opacity: 0, x: 26, filter: "blur(6px)", transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] } },
 };
 
+// Each child springs up + scales into place — a visible, tactile "pop" cascade.
 export const itemVariants = {
-  hidden: { opacity: 0, y: 12 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+  hidden: { opacity: 0, y: 30, scale: 0.92, filter: "blur(6px)" },
+  show: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    filter: "blur(0px)",
+    transition: {
+      y: { type: "spring", stiffness: 260, damping: 18, mass: 0.7 },
+      scale: { type: "spring", stiffness: 260, damping: 18, mass: 0.7 },
+      opacity: { duration: 0.3, ease: "easeOut" },
+      filter: { duration: 0.4, ease: "easeOut" },
+    },
+  },
 };
 
 // Reduced-motion: minimal movement.

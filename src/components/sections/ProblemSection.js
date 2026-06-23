@@ -24,7 +24,7 @@ export default function ProblemSection({ eyebrow, title, body, points = [] }) {
           <motion.ul variants={itemReveal} className="mt-6 space-y-2.5">
             {points.map((pt, i) => (
               <li key={i} className="flex items-start gap-3">
-                <span className="mt-2 w-1.5 h-1.5 rounded-full bg-[#1A9C88] shrink-0" />
+                <span className="mt-2 w-1.5 h-1.5 rounded-full bg-[#00D4FF] shrink-0" />
                 <span className="panel-body">{pt}</span>
               </li>
             ))}

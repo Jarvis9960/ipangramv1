@@ -31,7 +31,7 @@ export default function ObjectTooltip() {
       <span data-testid="object-hover-tooltip-title" className="font-mono text-[11px] tracking-[0.12em] uppercase text-[#10203A]">
         {meta.name}
       </span>
-      <ArrowUpRight size={13} className="text-[#1A9C88]" />
+      <ArrowUpRight size={13} className="text-[#00D4FF]" />
     </div>
   );
 }

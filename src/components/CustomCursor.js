@@ -38,8 +38,8 @@ export default function CustomCursor() {
         ringRef.current.style.transform = `translate(${ring.current.x}px, ${ring.current.y}px) translate(-50%, -50%)`;
         ringRef.current.style.width = `${size}px`;
         ringRef.current.style.height = `${size}px`;
-        ringRef.current.style.borderColor = interactive ? "rgba(26,156,136,0.9)" : "rgba(26,156,136,0.42)";
-        ringRef.current.style.background = dragging ? "rgba(26,156,136,0.14)" : interactive ? "rgba(26,156,136,0.08)" : "transparent";
+        ringRef.current.style.borderColor = interactive ? "rgba(0,212,255,0.9)" : "rgba(0,212,255,0.42)";
+        ringRef.current.style.background = dragging ? "rgba(0,212,255,0.14)" : interactive ? "rgba(0,212,255,0.08)" : "transparent";
       }
       raf = requestAnimationFrame(loop);
     };
@@ -58,13 +58,13 @@ export default function CustomCursor() {
     <div data-testid="custom-cursor" className="pointer-events-none fixed inset-0 z-[200]" aria-hidden="true">
       <div
         ref={dotRef}
-        className="fixed top-0 left-0 w-[6px] h-[6px] rounded-full bg-[#1A9C88]"
+        className="fixed top-0 left-0 w-[6px] h-[6px] rounded-full bg-[#00D4FF]"
         style={{ transform: "translate(-100px,-100px) translate(-50%,-50%)", marginLeft: -3, marginTop: -3 }}
       />
       <div
         ref={ringRef}
         className="fixed top-0 left-0 rounded-full border"
-        style={{ width: 28, height: 28, borderColor: "rgba(26,156,136,0.42)", transition: "width 200ms cubic-bezier(0.22,1,0.36,1), height 200ms cubic-bezier(0.22,1,0.36,1), border-color 200ms ease, background 200ms ease" }}
+        style={{ width: 28, height: 28, borderColor: "rgba(0,212,255,0.42)", transition: "width 200ms cubic-bezier(0.22,1,0.36,1), height 200ms cubic-bezier(0.22,1,0.36,1), border-color 200ms ease, background 200ms ease" }}
       />
     </div>
   );

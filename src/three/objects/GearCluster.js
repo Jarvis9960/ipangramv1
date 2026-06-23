@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { OBJECT_POSITIONS } from "@/config/checkpoints";
 import { useFocus, hoverProps } from "@/three/objects/_useFocus";
+import { useFocusFade } from "@/three/objects/_useFocusFade";
 import { useClickPulse } from "@/three/objects/_useClickPulse";
 import { useSceneStore } from "@/store/useSceneStore";
 import { C } from "@/config/theme";
@@ -32,6 +33,8 @@ function makeGearGeometry(radius, teeth, depth) {
 export default function GearCluster({ index = 4, quality = "high" }) {
   const focus = useFocus(index);
   const [pulse, burst] = useClickPulse({ up: 0.12, down: 1.1 });
+  const group = useRef();
+  useFocusFade(group, focus);
   const centerRef = useRef();
   const satRefs = useRef([]);
   const stuckIndex = useMemo(() => Math.floor(Math.random() * 6), []);
@@ -84,6 +87,7 @@ export default function GearCluster({ index = 4, quality = "high" }) {
 
   return (
     <group
+      ref={group}
       position={OBJECT_POSITIONS.gears}
       {...hoverProps("gears")}
       rotation={[0.1, 0, 0]}

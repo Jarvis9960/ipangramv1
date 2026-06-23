@@ -8,14 +8,18 @@ export default function ProgressDots() {
   const activeIndex = useSceneStore((s) => s.activeIndex);
   const requestJump = useSceneStore((s) => s.requestJump);
   const isMobile = useSceneStore((s) => s.isMobile);
+  const introDone = useSceneStore((s) => s.introDone);
   const [hover, setHover] = useState(null);
+
+  // Stay hidden through the cinematic intro; appear with the hero/journey.
+  if (!introDone) return null;
 
   if (isMobile) {
     // slim top progress bar on mobile
     const pct = ((activeIndex) / (CHECKPOINTS.length - 1)) * 100;
     return (
       <div className="fixed top-[68px] left-0 right-0 z-[55] h-[2px] bg-[rgba(16,32,58,0.07)]" data-testid="scene-progress-mobile">
-        <div className="h-full bg-[#1A9C88] transition-[width] duration-500 ease-out" style={{ width: `${pct}%` }} />
+        <div className="h-full bg-[#00D4FF] transition-[width] duration-500 ease-out" style={{ width: `${pct}%` }} />
       </div>
     );
   }
@@ -44,9 +48,9 @@ export default function ProgressDots() {
                 style={{
                   width: active ? 11 : hover === i ? 10 : 8,
                   height: active ? 11 : hover === i ? 10 : 8,
-                  background: active ? "#1A9C88" : hover === i ? "#9FB0C8" : "#C7D2E2",
+                  background: active ? "#00D4FF" : hover === i ? "#9FB0C8" : "#C7D2E2",
                   border: active ? "none" : "1px solid rgba(16,32,58,0.16)",
-                  boxShadow: active ? "0 0 0 6px rgba(26,156,136,0.13)" : "none",
+                  boxShadow: active ? "0 0 0 6px rgba(0,212,255,0.13)" : "none",
                   transitionTimingFunction: "cubic-bezier(0.22,1,0.36,1)",
                 }}
               />

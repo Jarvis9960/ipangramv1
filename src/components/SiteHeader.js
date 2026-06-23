@@ -32,7 +32,7 @@ export default function SiteHeader() {
           data-testid="site-header-logo"
           className="text-[16px] font-bold tracking-[-0.03em] text-[#10203A]"
         >
-          IPangram<span className="text-[#1A9C88]">.ai</span>
+          IPangram<span className="text-[#00D4FF]">.ai</span>
         </Link>
 
         <DesktopNav />
@@ -48,7 +48,7 @@ export default function SiteHeader() {
           <Link
             to="/contact"
             data-testid="site-header-book-session-button"
-            className="bg-[#1A9C88] text-white text-[13px] font-semibold rounded-[10px] px-4 py-2 hover:bg-[#137A6B] hover:shadow-[0_10px_30px_-8px_rgba(26,156,136,0.5)] transition-[background,box-shadow]"
+            className="bg-[#00D4FF] text-white text-[13px] font-semibold rounded-[10px] px-4 py-2 hover:bg-[#0891B2] hover:shadow-[0_10px_30px_-8px_rgba(0,212,255,0.5)] transition-[background,box-shadow]"
           >
             Book Strategy Session
           </Link>

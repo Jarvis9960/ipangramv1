@@ -4,12 +4,14 @@ import SceneCanvas from "@/three/SceneCanvas";
 import StaticScene from "@/three/StaticScene";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import IntroSequence from "@/components/intro/IntroSequence";
 import ProgressDots from "@/components/ProgressDots";
 import CustomCursor from "@/components/CustomCursor";
 import ObjectTooltip from "@/components/ObjectTooltip";
 import LoadingScreen from "@/components/LoadingScreen";
 import DataPanelHost from "@/components/panels/DataPanelHost";
 import { useLenisScroll } from "@/hooks/useLenisScroll";
+import { useScrollSnap } from "@/hooks/useScrollSnap";
 import { useKeyboardNav } from "@/hooks/useKeyboardNav";
 import { useQualityTier } from "@/hooks/useQualityTier";
 import { useDragRotate } from "@/hooks/useDragRotate";
@@ -20,6 +22,7 @@ import { PANELS, PANEL_ORDER } from "@/config/panelData";
 function App() {
   useQualityTier();
   useLenisScroll();
+  useScrollSnap();
   useKeyboardNav();
   useDragRotate();
   const setPointer = useSceneStore((s) => s.setPointer);
@@ -27,6 +30,11 @@ function App() {
   // The live 3D scene shows whenever WebGL is available. The CSS static scene is
   // only a last-resort fallback for browsers with no WebGL support at all.
   const showCanvas = hasWebGL;
+
+  // Note: the "always open at the top" scroll reset (disabling native scroll
+  // restoration + scrollTo(0,0)) lives in useLenisScroll, where it runs *before*
+  // Lenis is created — otherwise Lenis adopts the restored scroll position and
+  // glides straight past the intro into the hero on refresh.
 
   useEffect(() => {
     const onMove = (e) => {
@@ -40,6 +48,10 @@ function App() {
 
   return (
     <div className="app-root">
+      {/* Cinematic frame-sequence intro — owns the first scroll band, then slides
+          away to reveal the hero + 3D journey below. */}
+      <IntroSequence />
+
       {/* Accessible semantic content for screen readers / SEO */}
       <div className="sr-only">
         <h1>IPangram.ai — Intelligent Business Systems. Build. Automate. Scale.</h1>

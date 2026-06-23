@@ -121,7 +121,9 @@ export default function WaveformOrb({ index = 6, quality = "high" }) {
         arr[i * 3 + 2] = d.z * rr;
       }
       pointsRef.current.geometry.attributes.position.needsUpdate = true;
-      pointsRef.current.material.opacity = 0.2 + a * 0.75;
+      // Fade fully out at neighbouring checkpoints (no lingering floor) so the
+      // orb materialises only as the camera approaches its beat.
+      pointsRef.current.material.opacity = a * 0.95;
     }
     const selWorker = useSceneStore.getState().selection.worker;
     labelRefs.current.forEach((grp, i) => {
@@ -139,6 +141,7 @@ export default function WaveformOrb({ index = 6, quality = "high" }) {
       if (mesh && mesh.material) {
         const tex = hot ? labelTextures[i].hot : labelTextures[i].normal;
         if (mesh.material.map !== tex) mesh.material.map = tex;
+        mesh.material.opacity = a; // fade the orbiting cards with the orb
       }
     });
   });

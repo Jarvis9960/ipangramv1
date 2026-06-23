@@ -13,6 +13,7 @@ import { PANELS } from "@/config/panelData";
 // the user's control. Reduced-motion users get the final state with no reveal.
 export default function Hero() {
   const scrollProgress = useSceneStore((s) => s.scrollProgress);
+  const introProgress = useSceneStore((s) => s.introProgress);
   const reduced = useSceneStore((s) => s.reducedMotion);
   const requestJump = useSceneStore((s) => s.requestJump);
   const rootRef = useRef(null);
@@ -25,6 +26,14 @@ export default function Hero() {
   // the editorial type never clashes with the panel.
   const t = Math.min(1, scrollProgress / 0.045);
   const gone = t >= 1;
+
+  // The intro frame sequence sits on top during its scroll band; the hero must
+  // stay hidden until the intro is essentially complete, then dissolve in over
+  // the last sliver so the "IPANGRAM.AI" beat hands off into the hero headline.
+  // In headless / no-WebGL contexts there's no intro: introProgress is pinned at
+  // 1, so the hero shows immediately as before.
+  const introReveal = Math.min(1, Math.max(0, (introProgress - 0.93) / 0.07));
+  const hiddenForIntro = introReveal <= 0;
 
   // Intro reveal timeline on load (capable devices only).
   useEffect(() => {
@@ -52,11 +61,11 @@ export default function Hero() {
       data-testid="hero-overlay"
       className="hero-overlay"
       style={{
-        opacity: 1 - t,
-        transform: `translateY(${-t * 42}px)`,
-        visibility: gone ? "hidden" : "visible",
+        opacity: (1 - t) * introReveal,
+        transform: `translateY(${-t * 42 + (1 - introReveal) * 24}px)`,
+        visibility: gone || hiddenForIntro ? "hidden" : "visible",
       }}
-      aria-hidden={gone ? "true" : undefined}
+      aria-hidden={gone || hiddenForIntro ? "true" : undefined}
     >
       {/* The 3D fly-through network (HeroNetwork) renders in the WebGL canvas
           behind this overlay; the scrim just lifts the type off the web. */}

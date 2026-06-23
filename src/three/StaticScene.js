@@ -10,7 +10,7 @@ export default function StaticScene() {
   const activeIndex = useSceneStore((s) => s.activeIndex);
   const reduced = useSceneStore((s) => s.reducedMotion);
   const cp = CHECKPOINTS[activeIndex] || CHECKPOINTS[0];
-  const accent = cp.accent || "#1A9C88";
+  const accent = cp.accent || "#00D4FF";
   const meta = OBJECT_META[cp.object];
 
   const stars = useMemo(

@@ -69,13 +69,13 @@ export default function LoadingScreen() {
       </svg>
 
       <div data-testid="loading-logo" className="relative text-[30px] sm:text-[38px] font-bold tracking-[-0.03em] text-[#10203A] logo-pulse">
-        IPangram<span className="text-[#1A9C88]">.ai</span>
+        IPangram<span className="text-[#00D4FF]">.ai</span>
       </div>
       <p data-testid="loading-copy" className="relative mt-3 font-mono text-[11px] tracking-[0.18em] uppercase text-[#5B6A85]">
         Preparing your intelligent systems…
       </p>
       <div className="relative mt-7 w-[260px] h-[3px] rounded-full bg-[rgba(16,32,58,0.1)] overflow-hidden" data-testid="loading-progress">
-        <div className="loader-bar-fill h-full bg-gradient-to-r from-[#1A9C88] to-[#27B6A1]" />
+        <div className="loader-bar-fill h-full bg-gradient-to-r from-[#00D4FF] to-[#6EE7F9]" />
       </div>
       <p data-testid="loading-percent" className="relative mt-3 font-mono text-[11px] tabular-nums text-[#5B6A85]">
         {percent}%

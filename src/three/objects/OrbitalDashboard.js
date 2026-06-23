@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { OBJECT_POSITIONS } from "@/config/checkpoints";
 import { useFocus, hoverProps } from "@/three/objects/_useFocus";
+import { useFocusFade } from "@/three/objects/_useFocusFade";
 import { useClickPulse } from "@/three/objects/_useClickPulse";
 import { useSceneStore } from "@/store/useSceneStore";
 import { C } from "@/config/theme";
@@ -71,6 +72,7 @@ export default function OrbitalDashboard({ index = 9, quality = "high" }) {
   const focus = useFocus(index);
   const [pulse, burst] = useClickPulse({ up: 0.5, down: 0.6, ease: "power2.inOut" });
   const groupRef = useRef();
+  useFocusFade(groupRef, focus);
   const screenRefs = useRef([]);
   const orbRefs = useRef([]);
   const lastDraw = useRef(0);

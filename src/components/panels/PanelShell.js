@@ -10,8 +10,10 @@ import PanelContent from "@/components/panels/PanelContent";
 export default function PanelShell({ data }) {
   const isMobile = useSceneStore((s) => s.isMobile);
   const reduced = useSceneStore((s) => s.reducedMotion);
-  const tier = useSceneStore((s) => s.qualityTier);
-  const animated = tier !== "low" && !reduced;
+  // 2D panel reveals are lightweight transform/opacity work — they should run on
+  // every device, gated ONLY by the user's reduced-motion preference (NOT the GPU
+  // quality tier, which is about the 3D scene). A low-end GPU still animates HTML.
+  const animated = !reduced;
 
   const desktopWrap =
     "fixed right-6 top-[88px] bottom-6 z-[50] w-[38vw] max-w-[520px] min-w-[400px] pointer-events-auto";

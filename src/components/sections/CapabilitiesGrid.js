@@ -23,8 +23,8 @@ export default function CapabilitiesGrid({ eyebrow, title, body, items = [] }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {items.map((item, i) => (
           <motion.div key={i} variants={itemReveal} className="glass-card p-6">
-            <div className="w-9 h-9 rounded-lg bg-[rgba(26,156,136,0.1)] flex items-center justify-center mb-4">
-              <Zap size={18} className="text-[#1A9C88]" />
+            <div className="w-9 h-9 rounded-lg bg-[rgba(0,212,255,0.1)] flex items-center justify-center mb-4">
+              <Zap size={18} className="text-[#00D4FF]" />
             </div>
             <h3 className="sub-page-h3 mb-2">{item.title}</h3>
             <p className="text-[14px] text-[#5B6A85] leading-relaxed">{item.description}</p>
